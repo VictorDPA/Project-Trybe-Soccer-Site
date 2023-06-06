@@ -32,4 +32,15 @@ const validateToken = (
   return next();
 };
 
-export { validateLogin, validateToken };
+const validateNewMatch = (req: Request, res: Response, next: NextFunction) => {
+  const { homeTeam, awayTeam } = req.body;
+
+  if (homeTeam === awayTeam) {
+    return res.status(StatusCodes.UNPROCESSABLE_ENTITY)
+      .json({ message: 'It is not possible to create a mtch with two equal teams' });
+  }
+
+  return next();
+};
+
+export { validateLogin, validateToken, validateNewMatch };
