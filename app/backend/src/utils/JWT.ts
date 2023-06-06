@@ -11,5 +11,5 @@ export default class JWT {
 
   newToken = (payload: object) => jwt.sign(payload, this.secret, this.config);
 
-  validateToken = (token: string) => jwt.verify(token, this.secret);
+  validateToken = <Type>(token: string) => jwt.verify(token, this.secret) as Type;
 }

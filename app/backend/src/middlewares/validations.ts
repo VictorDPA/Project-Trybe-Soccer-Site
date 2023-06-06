@@ -1,5 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import JWT from '../utils/JWT';
 import { loginSchema } from './joiSchemas';
+import { Login, RequestUser } from '../interfaces/UserInterfaces';
 
 const validateLogin = (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
@@ -12,8 +15,21 @@ const validateLogin = (req: Request, res: Response, next: NextFunction) => {
   return next();
 };
 
-const validateSomething = (_req: Request, _res: Response, _next: NextFunction) => {
-  // ...
+const validateToken = (
+  req: RequestUser,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { authorization } = req.headers;
+
+  if (!authorization) {
+    return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Token not found' });
+  }
+
+  const token = new JWT().validateToken<Login>(authorization);
+  req.user = token;
+
+  return next();
 };
 
-export { validateLogin, validateSomething };
+export { validateLogin, validateToken };
