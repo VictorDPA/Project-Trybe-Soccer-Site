@@ -1,5 +1,5 @@
 import * as sinon from 'sinon';
-import { expect } from 'chai';
+import * as chai from 'chai';
 //@ts-ignore
 import chaiHttp = require('chai-http');
 import { mockTeams, mockOneTeam } from './mocks/team.mock';
@@ -7,6 +7,8 @@ import Team from '../database/models/Team';
 import { app } from '../app';
 
 chai.use(chaiHttp);
+
+const expect = chai.expect;
 
 describe('Team', () => {
   let modelStub: sinon.SinonStub;

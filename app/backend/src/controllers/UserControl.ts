@@ -9,8 +9,8 @@ export default class UserControl {
   async login(req: Request, res: Response) {
     const { email, password } = req.body;
 
-    const token = await this.userService.login({ email, password });
-    return res.status(StatusCodes.OK).json(token);
+    const itoken = await this.userService.login({ email, password });
+    return res.status(StatusCodes.OK).json({ token: itoken });
   }
 
   static async userRole(req: RequestUser, res: Response) {

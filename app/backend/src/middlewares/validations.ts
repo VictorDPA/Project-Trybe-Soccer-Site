@@ -1,17 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import JWT from '../utils/JWT';
-import loginSchema from './joiSchemas';
+import { readError, loginSchema } from './joiSchemas';
 import { Login, RequestUser } from '../interfaces/UserInterfaces';
 
 const validateLogin = (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
-  const validation = loginSchema({ email, password });
+  const { error } = loginSchema({ email, password });
 
-  if (validation && validation.errorCode) {
-    return res.status(validation.errorCode).json({ message: validation.errorMessage });
+  if (error) {
+    const { type } = error.details[0];
+    const statusCode = readError(type);
+    return res.status(statusCode).json({ message: error.message });
   }
-
   return next();
 };
 

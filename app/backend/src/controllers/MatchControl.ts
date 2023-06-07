@@ -14,7 +14,7 @@ export default class MatchControl {
 
   async createMatch(req: Request, res: Response) {
     const match = await this.matchService.createMatch(req.body);
-    res.status(StatusCodes.OK).json(match);
+    res.status(StatusCodes.CREATED).json(match);
   }
 
   async updateMatch(req: Request, res: Response) {

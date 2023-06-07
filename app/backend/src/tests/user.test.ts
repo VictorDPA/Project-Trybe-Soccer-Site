@@ -1,5 +1,5 @@
 import * as sinon from 'sinon';
-import { expect } from 'chai';
+import * as chai from 'chai';
 //@ts-ignore
 import chaiHttp = require('chai-http');
 import {
@@ -14,6 +14,8 @@ import JWT from '../utils/JWT';
 
 
 chai.use(chaiHttp);
+
+const expect = chai.expect;
 
 describe('User', () => {
   let modelStub: sinon.SinonStub;
