@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import JWT from '../utils/JWT';
-import { loginSchema } from './joiSchemas';
+import loginSchema from './joiSchemas';
 import { Login, RequestUser } from '../interfaces/UserInterfaces';
 
 const validateLogin = (req: Request, res: Response, next: NextFunction) => {

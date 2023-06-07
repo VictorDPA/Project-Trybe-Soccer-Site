@@ -47,4 +47,4 @@ const loginSchema = (login: Login) => {
   }
   return null;
 };
-export { loginSchema };
+export default loginSchema;
