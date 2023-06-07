@@ -2,7 +2,7 @@ import * as jwt from 'jsonwebtoken';
 
 export default class JWT {
   constructor(
-    private secret = process.env.JWT_SECRET || 'secret',
+    private secret:string = process.env.JWT_SECRET || 'secret',
     private config: jwt.SignOptions = {
       expiresIn: '2d',
       algorithm: 'HS256',

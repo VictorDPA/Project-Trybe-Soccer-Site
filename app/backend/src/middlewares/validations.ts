@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import JWT from '../utils/JWT';
 import { readError, loginSchema } from './joiSchemas';
-import { Login, RequestUser } from '../interfaces/UserInterfaces';
+import { RequestUser, Login } from '../interfaces/UserInterfaces';
 
 const validateLogin = (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
@@ -34,9 +34,7 @@ const validateToken = (
 };
 
 const validateNewMatch = (req: Request, res: Response, next: NextFunction) => {
-  const { homeTeam, awayTeam } = req.body;
-
-  if (homeTeam === awayTeam) {
+  if (req.body.homeTeamId === req.body.awayTeamId) {
     return res.status(StatusCodes.UNPROCESSABLE_ENTITY)
       .json({ message: 'It is not possible to create a match with two equal teams' });
   }

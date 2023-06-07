@@ -10,10 +10,10 @@ export default class MatchService {
     private teamModel = new TeamModel(),
   ) {}
 
-  async getAllMatches(inProgress?: string) {
+  async getAllMatches(inProgress: string | undefined) {
     if (inProgress !== undefined) {
       const progress = inProgress === 'true';
-      const matches = await this.matchModel.getMatchesInProgressScoped(progress);
+      const matches = await this.matchModel.getMatchesInProgress(progress);
       return matches;
     }
     const matches = await this.matchModel.getAllMatches();
