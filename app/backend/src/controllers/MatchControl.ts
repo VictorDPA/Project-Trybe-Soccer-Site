@@ -3,17 +3,18 @@ import { StatusCodes } from 'http-status-codes';
 import MatchService from '../services/MatchService';
 
 export default class MatchControl {
-  constructor(private matchService = new MatchService()) { }
+  constructor(private readonly matchService = new MatchService()) { }
 
   async getAllMatches(req: Request, res: Response) {
-    const { inProgress } = req.query;
+    const inProgress = Boolean(req.query.inProgress);
     const matches = await this.matchService
-      .getAllMatches(inProgress as string | undefined);
+      .getAllMatches(String(inProgress));
     res.status(StatusCodes.OK).json(matches);
   }
 
   async createMatch(req: Request, res: Response) {
-    const match = await this.matchService.createMatch(req.body);
+    const data = req.body;
+    const match = await this.matchService.createMatch(data);
     res.status(StatusCodes.CREATED).json(match);
   }
 

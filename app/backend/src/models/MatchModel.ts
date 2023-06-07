@@ -2,7 +2,10 @@ import MatchInterface from '../interfaces/MatchInterfaces';
 import Match from '../database/models/Match';
 
 export default class MatchModel {
-  constructor(private match = Match) {}
+  private readonly match: typeof Match;
+  constructor(match: typeof Match = Match) {
+    this.match = match;
+  }
 
   async getAllMatches() {
     const matches = await this.match.scope('withTeams').findAll();

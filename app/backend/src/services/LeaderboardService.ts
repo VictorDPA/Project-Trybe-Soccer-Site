@@ -6,7 +6,7 @@ import {
   PerformanceInterface as IPerf,
 } from '../interfaces/LeaderboardInterfaces';
 
-// type goalKey = 'homeTeamGoals' | 'awayTeamGoals';
+type goalKey = 'homeTeamGoals' | 'awayTeamGoals';
 
 export default class LeaderboardService {
   constructor(
@@ -80,9 +80,9 @@ export default class LeaderboardService {
   }
 
   setTeamsPerformance(allMatches: IMat[], allTeams: ITeam[], homeTeam: boolean) {
+    const isHome = homeTeam ? 'homeTeamId' : 'awayTeamId';
     return allTeams.map((team) => {
-      const matchesPerTeam = allMatches.filter(({ homeTeamId, awayTeamId }) =>
-        (homeTeam ? homeTeamId === team.id : awayTeamId === team.id));
+      const matchesPerTeam = allMatches.filter((t) => t[isHome] === team.id);
 
       const performance = homeTeam
         ? this.calculateTeamPerformance(team, matchesPerTeam, true)
@@ -92,6 +92,27 @@ export default class LeaderboardService {
       return performance;
     });
   }
+
+  // static setTeamsLeaderboard(leaderboard: IMat[], allTeams: ITeam[], home: boolean) {
+  //   const isHome = home ? 'homeTeamId' : 'awayTeamId';
+  //   return allTeams.map((team) => {
+  //     const teamsLeaderboard = leaderboard.filter((t) => t[isHome] === t.id);
+  //     const goals = (t: goalKey): number => teamsLeaderboard.reduce((a, match) => a + match[t], 0);
+  //     return {
+  //       ...team,
+  //       name: team.teamName,
+  //       totalGames: LeaderboardService.setTotals(teamsLeaderboard),
+  //       goalsFavor: goals('homeTeamGoals'),
+  //       goalsOwn: goals('awayTeamGoals'),
+  //       totalVictories: LeaderboardService.setTotals(teamsLeaderboard, 'victories'),
+  //       totalDraws: LeaderboardService.setTotals(teamsLeaderboard, 'draws'),
+  //       totalLosses: LeaderboardService.setTotals(teamsLeaderboard, 'losses'),
+  //       totalPoints: LeaderboardService.setTotals(teamsLeaderboard, 'points'),
+  //       goalsBalance: goals('homeTeamGoals') - goals('awayTeamGoals'),
+  //       efficiency: LeaderboardService.setTotals(teamsLeaderboard, 'eficiency'),
+  //     };
+  //   });
+  // }
 
   resetAtributePerformance() {
     this.performance = {
@@ -125,27 +146,6 @@ export default class LeaderboardService {
       };
     });
   }
-
-  // static setTeamsLeaderboard(leaderboard: IMat[], allTeams: ITeam[], home: boolean) {
-  //   const isHome = home ? 'homeTeamId' : 'awayTeamId';
-  //   return allTeams.map((team) => {
-  //     const teamsLeaderboard = leaderboard.filter((t) => t[isHome] === t.id);
-  //     const goals = (t: goalKey): number => teamsLeaderboard.reduce((a, match) => a + match[t], 0);
-  //     return {
-  //       ...team,
-  //       name: team.teamName,
-  //       totalGames: LeaderboardService.setTotals(teamsLeaderboard),
-  //       goalsFavor: goals('homeTeamGoals'),
-  //       goalsOwn: goals('awayTeamGoals'),
-  //       totalVictories: LeaderboardService.setTotals(teamsLeaderboard, 'victories'),
-  //       totalDraws: LeaderboardService.setTotals(teamsLeaderboard, 'draws'),
-  //       totalLosses: LeaderboardService.setTotals(teamsLeaderboard, 'losses'),
-  //       totalPoints: LeaderboardService.setTotals(teamsLeaderboard, 'points'),
-  //       goalsBalance: goals('homeTeamGoals') - goals('awayTeamGoals'),
-  //       efficiency: LeaderboardService.setTotals(teamsLeaderboard, 'eficiency'),
-  //     };
-  //   });
-  // }
 
   static sortLeaderboard(leaderboard: IPerf[]) {
     return leaderboard.sort((a, b) => {

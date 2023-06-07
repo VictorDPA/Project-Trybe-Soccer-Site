@@ -11,18 +11,19 @@ export default class MatchService {
   ) {}
 
   async getAllMatches(inProgress: string | undefined) {
-    if (inProgress !== undefined) {
-      const progress = inProgress === 'true';
-      const matches = await this.matchModel.getMatchesInProgress(progress);
-      return matches;
-    }
-    const matches = await this.matchModel.getAllMatches();
+    const progress = inProgress === 'true';
+    const matches = await (inProgress !== undefined
+      ? this.matchModel.getMatchesInProgress(progress)
+      : this.matchModel.getAllMatches());
+
     return matches;
   }
 
   async createMatch(match: MatchInterface) {
-    const homeTeam = await this.teamModel.getOneTeam(match.homeTeamId);
-    const awayTeam = await this.teamModel.getOneTeam(match.awayTeamId);
+    const [homeTeam, awayTeam] = await Promise.all([
+      this.teamModel.getOneTeam(match.homeTeamId),
+      this.teamModel.getOneTeam(match.awayTeamId),
+    ]);
 
     if (!homeTeam || !awayTeam) {
       throw new ErrorLaunch(StatusCodes.NOT_FOUND, 'There is no team with such id!');

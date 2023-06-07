@@ -1,14 +1,14 @@
 import TeamModel from '../models/TeamModel';
 
 export default class TeamService {
-  constructor(private teamModel = new TeamModel()) {}
+  constructor(private readonly teamModel = new TeamModel()) {}
 
-  async getAllTeams() {
+  public async getAllTeams() {
     const teams = await this.teamModel.getAllTeams();
     return teams;
   }
 
-  async getOneTeam(id: number) {
+  public async getOneTeam(id: number) {
     const team = await this.teamModel.getOneTeam(id);
     return team;
   }

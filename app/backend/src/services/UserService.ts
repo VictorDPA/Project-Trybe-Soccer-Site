@@ -6,12 +6,12 @@ import UserModel from '../models/UserModel';
 import JWT from '../utils/JWT';
 
 export default class UserService {
-  constructor(private userModel = new UserModel()) {}
+  constructor(private readonly userModel = new UserModel()) {}
 
   async login({ email, password }: { email: string; password: string }) {
     const user = await this.userModel.login(email);
 
-    if (!user || !UserService.verifyUser(user, password)) {
+    if (!user || !(await UserService.verifyUser(user, password))) {
       throw new ErrorLaunch(StatusCodes.UNAUTHORIZED, 'Invalid email or password');
     }
 
@@ -21,7 +21,7 @@ export default class UserService {
     return loginToken;
   }
 
-  private static verifyUser(user: User, password: string) {
+  private static async verifyUser(user: User, password: string) {
     return bcrypt.compareSync(password, user.password);
   }
 }

@@ -34,7 +34,8 @@ const validateToken = (
 };
 
 const validateNewMatch = (req: Request, res: Response, next: NextFunction) => {
-  if (req.body.homeTeamId === req.body.awayTeamId) {
+  const { homeTeamId, awayTeamId } = req.body;
+  if (homeTeamId === awayTeamId) {
     return res.status(StatusCodes.UNPROCESSABLE_ENTITY)
       .json({ message: 'It is not possible to create a match with two equal teams' });
   }

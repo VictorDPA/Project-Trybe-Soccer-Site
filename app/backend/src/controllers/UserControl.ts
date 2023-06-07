@@ -4,7 +4,7 @@ import UserService from '../services/UserService';
 import { RequestUser, Login } from '../interfaces/UserInterfaces';
 
 export default class UserControl {
-  private userService: UserService;
+  private readonly userService: UserService;
 
   constructor() {
     this.userService = new UserService();

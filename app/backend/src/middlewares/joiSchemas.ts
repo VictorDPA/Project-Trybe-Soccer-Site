@@ -1,10 +1,11 @@
 import { StatusCodes } from 'http-status-codes';
 import * as Joi from 'joi';
 
-interface Login {
+type Login = {
   email: string;
   password: string;
-}
+};
+
 const typesErrors: { [key: string]: number } = {
   'string.empty': StatusCodes.BAD_REQUEST,
   'any.required': StatusCodes.BAD_REQUEST,
