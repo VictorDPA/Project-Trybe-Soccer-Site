@@ -58,7 +58,7 @@ Match.addScope('withTeams', {
   ],
 });
 
-Match.addScope('allTeamsPerformance', {
+Match.addScope('allTeams', {
   include: [
     {
       association: 'homeTeam',

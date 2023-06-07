@@ -37,7 +37,7 @@ const validateNewMatch = (req: Request, res: Response, next: NextFunction) => {
 
   if (homeTeam === awayTeam) {
     return res.status(StatusCodes.UNPROCESSABLE_ENTITY)
-      .json({ message: 'It is not possible to create a mtch with two equal teams' });
+      .json({ message: 'It is not possible to create a match with two equal teams' });
   }
 
   return next();

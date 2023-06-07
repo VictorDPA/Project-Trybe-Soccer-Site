@@ -1,8 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
 import ErrorLaunch from '../utils/ErrorLaunch';
 import TeamModel from '../models/TeamModel';
-import Match from '../interfaces/MatchInterfaces';
 import MatchModel from '../models/MatchModel';
+import { MatchProgressInterface as IMatch } from '../interfaces/LeaderboardInterfaces';
 
 export default class MatchService {
   constructor(
@@ -19,10 +19,10 @@ export default class MatchService {
     return matches;
   }
 
-  async createMatch(match: Match) {
+  async createMatch(match: IMatch) {
     const { homeTeamId, awayTeamId } = match;
-    const homeTeam = await this.teamModel.getTeamById(homeTeamId);
-    const awayTeam = await this.teamModel.getTeamById(awayTeamId);
+    const homeTeam = await this.teamModel.getOneTeam(homeTeamId);
+    const awayTeam = await this.teamModel.getOneTeam(awayTeamId);
 
     if (!homeTeam || !awayTeam) {
       throw new ErrorLaunch(StatusCodes.NOT_FOUND, 'There is no team with sich id!');

@@ -1,4 +1,5 @@
 import Match from '../database/models/Match';
+import MatchInterface from '../interfaces/MatchInterfaces';
 
 export default class MatchModel {
   constructor(private match = Match) {}
@@ -8,14 +9,21 @@ export default class MatchModel {
     return matches;
   }
 
-  async getMatchesInProgress(inProgress: boolean) {
+  async getMatchesInProgressScoped(inProgress: boolean) {
     const matches = await this.match.scope('withTeams').findAll({
       where: { inProgress },
     });
     return matches;
   }
 
-  async createMatch(match: Match) {
+  async getMatchesInProgress(inProgress: boolean) {
+    const matches = await this.match.findAll({
+      where: { inProgress },
+    });
+    return matches;
+  }
+
+  async createMatch(match: MatchInterface) {
     const create = await this.match.create({
       ...match,
       inProgress: true,
