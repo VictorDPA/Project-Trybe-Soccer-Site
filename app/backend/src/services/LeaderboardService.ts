@@ -48,35 +48,37 @@ export default class LeaderboardService {
   //   }
   // }
   setNotConditionalPerformanceData(team: ITeam, matchesPerTeam: IMat[]) {
-    this.performance.name = team.teamName;
-    this.performance.totalGames = matchesPerTeam.length;
-    this.performance.goalsBalance = this.performance.goalsFavor - this.performance.goalsOwn;
-    this.performance.efficiency = Number(
-      ((this.performance.totalPoints / (this.performance.totalGames * 3)) * 100).toFixed(2),
+    const { performance } = this;
+    performance.name = team.teamName;
+    performance.totalGames = matchesPerTeam.length;
+    performance.goalsBalance = performance.goalsFavor - performance.goalsOwn;
+    performance.efficiency = Number(
+      ((performance.totalPoints / (performance.totalGames * 3)) * 100).toFixed(2),
     );
   }
 
   calculateTeamPerformance(team: ITeam, matchesPerTeam: IMat[], isHomeTeam: boolean) {
+    const { performance } = this;
     matchesPerTeam.forEach((match) => {
-      this.performance.goalsFavor += isHomeTeam ? match.homeTeamGoals : match.awayTeamGoals;
-      this.performance.goalsOwn += isHomeTeam ? match.awayTeamGoals : match.homeTeamGoals;
+      performance.goalsFavor += isHomeTeam ? match.homeTeamGoals : match.awayTeamGoals;
+      performance.goalsOwn += isHomeTeam ? match.awayTeamGoals : match.homeTeamGoals;
 
       if ((isHomeTeam && match.homeTeamGoals > match.awayTeamGoals)
         || (!isHomeTeam && match.awayTeamGoals > match.homeTeamGoals)) {
-        this.performance.totalVictories += 1;
-        this.performance.totalPoints += 3;
+        performance.totalVictories += 1;
+        performance.totalPoints += 3;
       } else if ((isHomeTeam && match.homeTeamGoals < match.awayTeamGoals)
         || (!isHomeTeam && match.awayTeamGoals < match.homeTeamGoals)) {
-        this.performance.totalLosses += 1;
+        performance.totalLosses += 1;
       } else {
-        this.performance.totalDraws += 1;
-        this.performance.totalPoints += 1;
+        performance.totalDraws += 1;
+        performance.totalPoints += 1;
       }
     });
 
     this.setNotConditionalPerformanceData(team, matchesPerTeam);
 
-    return this.performance;
+    return performance;
   }
 
   setTeamsPerformance(allMatches: IMat[], allTeams: ITeam[], homeTeam: boolean) {
@@ -149,22 +151,27 @@ export default class LeaderboardService {
 
   static sortLeaderboard(leaderboard: IPerf[]) {
     return leaderboard.sort((a, b) => {
-      if (a.totalPoints !== b.totalPoints) {
-        return b.totalPoints - a.totalPoints;
+      switch (true) {
+        case a.totalPoints !== b.totalPoints:
+          return b.totalPoints - a.totalPoints;
+
+        case a.totalVictories !== b.totalVictories:
+          return b.totalVictories - a.totalVictories;
+
+        case a.goalsBalance !== b.goalsBalance:
+          return b.goalsBalance - a.goalsBalance;
+
+        default: return b.goalsFavor - a.goalsFavor;
       }
-      if (a.totalVictories !== b.totalVictories) {
-        return b.totalVictories - a.totalVictories;
-      }
-      if (a.goalsBalance !== b.goalsBalance) {
-        return b.goalsBalance - a.goalsBalance;
-      }
-      return b.goalsFavor - a.goalsFavor;
     });
   }
 
   async getLeaderboardHomeTeams() {
-    const leaderboard = await this.match.getAllMatchesInProgressNoScope(false);
-    const allTeams = await this.team.getAllTeams();
+    const [leaderboard, allTeams] = await Promise.all([
+      this.match.getAllMatchesInProgressNoScope(false),
+      this.team.getAllTeams(),
+    ]);
+
     const homeTeam = true;
 
     const allHomeTeams = this.setTeamsPerformance(leaderboard, allTeams, homeTeam);
@@ -174,8 +181,10 @@ export default class LeaderboardService {
   }
 
   async getLeaderboardAwayTeams() {
-    const leaderboard = await this.match.getAllMatchesInProgressNoScope(false);
-    const allTeams = await this.team.getAllTeams();
+    const [leaderboard, allTeams] = await Promise.all([
+      this.match.getAllMatchesInProgressNoScope(false),
+      this.team.getAllTeams(),
+    ]);
     const homeTeam = false;
 
     const allAwayTeams = this.setTeamsPerformance(leaderboard, allTeams, homeTeam);
@@ -185,8 +194,10 @@ export default class LeaderboardService {
   }
 
   async getLeaderboardAllTeams() {
-    const homeTeams = await this.getLeaderboardHomeTeams();
-    const awayTeams = await this.getLeaderboardAwayTeams();
+    const [homeTeams, awayTeams] = await Promise.all([
+      this.getLeaderboardHomeTeams(),
+      this.getLeaderboardAwayTeams(),
+    ]);
 
     const allTeams = LeaderboardService.setAllTeamsPerformance(homeTeams, awayTeams)
       .map((team) => ({
