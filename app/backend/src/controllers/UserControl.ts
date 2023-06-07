@@ -4,17 +4,20 @@ import UserService from '../services/UserService';
 import { RequestUser, Login } from '../interfaces/UserInterfaces';
 
 export default class UserControl {
-  constructor(private userService = new UserService()) {}
+  private userService: UserService;
 
-  async login(req: Request, res: Response) {
+  constructor() {
+    this.userService = new UserService();
+  }
+
+  login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
+    const token = await this.userService.login({ email, password });
+    return res.status(StatusCodes.OK).json({ token });
+  };
 
-    const itoken = await this.userService.login({ email, password });
-    return res.status(StatusCodes.OK).json({ token: itoken });
-  }
-
-  static async userRole(req: RequestUser, res: Response) {
+  static userRole = async (req: RequestUser, res: Response) => {
     const { role } = req.user as Login;
-    res.status(StatusCodes.OK).json({ role });
-  }
+    return res.status(StatusCodes.OK).json({ role });
+  };
 }
